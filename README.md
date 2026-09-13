@@ -1,4 +1,4 @@
-# 🍽️ Página de Venda - Restaurante
+# 🍽️ Página de Venda - Restaurante demo
 
 Um protótipo moderno e responsivo de landing page desenvolvido para a apresentação de cardápios digitais, otimização de conversão e simulação de fluxos de atendimento para restaurantes.
 
