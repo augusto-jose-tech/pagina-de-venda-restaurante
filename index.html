@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍽️ Restaurante Sabor & Arte — Demo de Atendimento no WhatsApp</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: radial-gradient(circle at 20% 20%, #3a2214 0%, #1c110a 45%, #120a06 100%);
+        min-height: 100vh;
+        color: #f5efe6;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 28px;
+        background: rgba(18, 10, 6, 0.85);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(212, 168, 67, 0.25);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon { font-size: 2rem; }
+    .logo-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #e9c46a;
+        letter-spacing: 0.5px;
+    }
+    .logo-name small { display: block; font-family: 'Poppins'; font-size: 0.62rem; color: #b8a58a; letter-spacing: 3px; text-transform: uppercase; }
+    .badge {
+        background: linear-gradient(135deg, #25D366, #128C7E);
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 8px 18px;
+        border-radius: 30px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        box-shadow: 0 4px 18px rgba(37, 211, 102, 0.35);
+        animation: pulse 2.2s infinite;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+
+    /* ===== HERO ===== */
+    .hero { text-align: center; padding: 55px 20px 30px; max-width: 760px; margin: 0 auto; }
+    .hero h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(1.7rem, 4.5vw, 2.8rem);
+        line-height: 1.25;
+        color: #fff;
+    }
+    .hero h1 span { color: #e9c46a; }
+    .hero p { margin-top: 16px; color: #c9b8a0; font-size: 1rem; line-height: 1.7; font-weight: 300; }
+    .hero p strong { color: #e9c46a; font-weight: 600; }
+
+    /* ===== STATS ===== */
+    .stats {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin: 28px auto 10px;
+        max-width: 720px;
+        padding: 0 20px;
+    }
+    .stat {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(233,196,106,0.25);
+        border-radius: 14px;
+        padding: 14px 22px;
+        text-align: center;
+        min-width: 150px;
+    }
+    .stat b { display: block; font-size: 1.25rem; color: #e9c46a; }
+    .stat span { font-size: 0.75rem; color: #b8a58a; }
+
+    /* ===== CHAT ===== */
+    .chat-wrap { display: flex; justify-content: center; padding: 30px 16px 50px; }
+    .chat {
+        width: 100%;
+        max-width: 430px;
+        height: 640px;
+        background: #efeae2;
+        border-radius: 24px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(233,196,106,0.3);
+    }
+    .chat-head {
+        background: #1f1608;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 2px solid rgba(233,196,106,0.35);
+    }
+    .avatar {
+        width: 46px; height: 46px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #e9c46a, #b57e2c);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+    .chat-head h3 { font-size: 0.98rem; font-weight: 600; color: #fff; }
+    .chat-head .on { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #8fd6a5; margin-top: 2px; }
+    .dot { width: 8px; height: 8px; background: #25D366; border-radius: 50%; animation: blink 1.6s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+    .wa-icon { margin-left: auto; font-size: 1.5rem; }
+
+    .messages {
+        flex: 1;
+        padding: 20px 16px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background:
+            radial-gradient(circle at 80% 10%, rgba(233,196,106,0.07), transparent 40%),
+            #efeae2;
+    }
+    .messages::-webkit-scrollbar { width: 5px; }
+    .messages::-webkit-scrollbar-thumb { background: #c9b8a0; border-radius: 3px; }
+
+    .msg {
+        max-width: 84%;
+        padding: 10px 14px;
+        border-radius: 14px;
+        font-size: 0.86rem;
+        line-height: 1.55;
+        animation: pop 0.3s ease;
+        color: #2b2b2b;
+        white-space: pre-line;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+    }
+    @keyframes pop { from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:translateY(0)} }
+    .msg.bot { align-self: flex-start; background: #fff; border-bottom-left-radius: 4px; }
+    .msg.user { align-self: flex-end; background: #d9fdd3; border-bottom-right-radius: 4px; }
+    .msg .time { display: block; font-size: 0.62rem; color: #8a8a8a; text-align: right; margin-top: 4px; }
+
+    .typing { display: flex; gap: 4px; padding: 14px 16px; }
+    .typing span { width: 7px; height: 7px; background: #9aa08f; border-radius: 50%; animation: tp 1.3s infinite; }
+    .typing span:nth-child(2){ animation-delay: 0.2s; }
+    .typing span:nth-child(3){ animation-delay: 0.4s; }
+    @keyframes tp { 0%,100%{transform:translateY(0); opacity:0.4} 50%{transform:translateY(-5px); opacity:1} }
+
+    .btns { display: flex; flex-direction: column; gap: 7px; margin-top: 10px; }
+    .cbtn {
+        background: #fff;
+        border: 1.5px solid #25D366;
+        color: #128C7E;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 0.82rem;
+        padding: 11px 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.25s ease;
+    }
+    .cbtn:hover:not(:disabled) { background: #25D366; color: #fff; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37,211,102,0.35); }
+    .cbtn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .sum {
+        background: #fff9e8;
+        border: 1.5px dashed #d4a03c;
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin-top: 8px;
+        font-size: 0.8rem;
+    }
+    .sum b { color: #a06a12; }
+    .row { display: flex; justify-content: space-between; padding: 2px 0; color: #5a5245; }
+    .total { border-top: 1px solid #e5c88a; margin-top: 6px; padding-top: 6px; font-weight: 700; color: #2b2b2b; }
+
+    .owner-tag {
+        display: inline-block;
+        background: #1f1608;
+        color: #e9c46a;
+        font-size: 0.62rem;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+    }
+
+    /* ===== CTA ===== */
+    .cta {
+        max-width: 640px;
+        margin: 0 auto 60px;
+        padding: 45px 30px;
+        text-align: center;
+        background: linear-gradient(145deg, #241708, #3a2a10);
+        border: 1px solid rgba(233,196,106,0.4);
+        border-radius: 24px;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    }
+    .cta h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 3.5vw, 2rem); color: #e9c46a; }
+    .cta p { margin: 14px 0 26px; color: #d6c5ab; font-weight: 300; line-height: 1.7; }
+    .cta p strong { color: #fff; font-weight: 600; }
+    .cta-btn {
+        background: linear-gradient(135deg, #e9c46a, #c98f2b);
+        color: #241708;
+        border: none;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        font-weight: 700;
+        padding: 16px 38px;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .cta-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 30px rgba(233,196,106,0.4); }
+
+    footer {
+        text-align: center;
+        padding: 22px;
+        border-top: 1px solid rgba(233,196,106,0.15);
+        font-size: 0.75rem;
+        color: #8a7a63;
+    }
+
+    @media (max-width: 480px) {
+        .chat { height: 580px; border-radius: 18px; }
+        header { padding: 14px 16px; }
+        .hero { padding: 35px 16px 20px; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <span class="logo-icon">🍽️</span>
+        <div class="logo-name">Sabor & Arte<small>Restaurante</small></div>
+    </div>
+    <span class="badge">● Demo WhatsApp</span>
+</header>
+
+<section class="hero">
+    <h1>Imagine seu restaurante<br><span>atendendo e vendendo no piloto automático.</span></h1>
+    <p>Teste agora a simulação real do nosso <strong>Chatbot de Vendas para WhatsApp</strong>. Clique nos botões do chat e veja como um pedido é tirado em <strong>menos de 30 segundos</strong> — sem fila, sem erro e sem deixar o cliente esperando.</p>
+</section>
+
+<div class="stats">
+    <div class="stat"><b>⚡ 3 seg</b><span>tempo de resposta</span></div>
+    <div class="stat"><b>🕐 24/7</b><span>sempre online</span></div>
+    <div class="stat"><b>📈 +40%</b><span>mais pedidos</span></div>
+</div>
+
+<section class="chat-wrap">
+    <div class="chat">
+        <div class="chat-head">
+            <div class="avatar">🍽️</div>
+            <div>
+                <h3>Restaurante Sabor &amp; Arte</h3>
+                <div class="on"><span class="dot"></span> online agora</div>
+            </div>
+            <span class="wa-icon">💬</span>
+        </div>
+        <div class="messages" id="messages"></div>
+    </div>
+</section>
+
+<section class="cta">
+    <h2>Pronto para vender 24 horas por dia?</h2>
+    <p>O robô acabou de tirar um pedido completo em segundos. O seu restaurante pode ter isso <strong>hoje mesmo</strong>: cardápio digital, pedidos automáticos e pagamento pelo WhatsApp.</p>
+    <button class="cta-btn" onclick="alert('📲 Em um projeto real, este botão abre a conversa direta com seu especialista no WhatsApp!')">💬 Quero isso no meu restaurante</button>
+</section>
+
+<footer>Demo de Automação de Vendas • Restaurante Sabor &amp; Arte • Atendimento Inteligente no WhatsApp</footer>
+
+<script>
+const box = document.getElementById('messages');
+
+const now = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+function addUser(text) {
+    const m = document.createElement('div');
+    m.className = 'msg user';
+    m.textContent = text;
+    m.innerHTML += `<span class="time">${now()}</span>`;
+    box.appendChild(m);
+    scroll();
+}
+
+function addBot(html, buttons) {
+    const m = document.createElement('div');
+    m.className = 'msg bot';
+    let btns = '';
+    if (buttons) {
+        btns = '<div class="btns">' + buttons.map(b =>
+            `<button class="cbtn" onclick="pick(this,'${b.act}')">${b.label}</button>`
+        ).join('') + '</div>';
+    }
+    m.innerHTML = html + btns + `<span class="time">${now()}</span>`;
+    box.appendChild(m);
+    scroll();
+}
+
+function pick(el, act) {
+    el.closest('.btns').querySelectorAll('button').forEach(b => b.disabled = true);
+    addUser(el.textContent.trim());
+    ({ menu: showMenu, order: startOrder, combo: confirmCombo, attendant: talkAttendant,
+       payCard: () => pay('Cartão 💳'), payPix: () => pay('Pix 📱'), payCash: () => pay('Dinheiro 💵'),
+       expert: contactExpert, restart: startDemo }[act])();
+}
+
+async function typing(ms) {
+    const t = document.createElement('div');
+    t.className = 'msg bot';
+    t.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+    box.appendChild(t);
+    scroll();
+    await new Promise(r => setTimeout(r, ms));
+    t.remove();
+}
+
+function scroll() { box.scrollTop = box.scrollHeight; }
+
+/* ============ FLUXO DO CHATBOT ============ */
+async function startDemo() {
+    box.innerHTML = '';
+    await typing(1400);
+    addBot(
+`👋 Olá! Seja bem-vindo ao *Sabor & Arte*! 🍽️
+
+Comida caseira, pratos executivos e aquele sabor de restaurante de verdade. 😋
+
+Como posso te ajudar hoje?`,
+[{ label: '📋 Ver Cardápio', act: 'menu' },
+ { label: '🛒 Fazer Pedido', act: 'order' },
+ { label: '👤 Falar com Atendente', act: 'attendant' }]);
+}
+
+async function showMenu() {
+    await typing(1300);
+    addBot(
+`📋 *NOSSO CARDÁPIO* 🍽️
+
+🍲 *Pratos Executivos*
+• Bife à Parmegiana — R$ 29,90
+• Frango Grelhado — R$ 24,90
+• Picanha na Chapa — R$ 39,90
+
+🍝 *Massas*
+• Lasanha à Bolonhesa — R$ 27,90
+
+🥤 *Bebidas*
+• Refrigerante Lata — R$ 4,50
+• Suco Natural — R$ 6,90
+
+Quer fazer seu pedido? 👇`,
+[{ label: '🛒 Fazer Pedido', act: 'order' }]);
+}
+
+async function talkAttendant() {
+    await typing(1100);
+    addBot(
+`Claro! 👋 Um dos nossos atendentes já foi notificado.
+
+⏱️ Tempo médio de resposta: *2 minutos*
+
+Enquanto isso, posso adiantar seu pedido, se quiser. 😉`,
+[{ label: '🛒 Fazer Pedido', act: 'order' }]);
+}
+
+async function startOrder() {
+    await typing(1300);
+    addBot(
+`🛒 Perfeito! Vamos ao seu pedido! 🎉
+
+🔥 *COMBO DO DIA* 🔥
+
+🍗 Bife à Parmegiana
+🍚 Arroz soltinho
+🍟 Batata frita crocante
+🥤 Refrigerante lata
+
+💰 De R$ 34,60 por apenas *R$ 29,90*!
+
+Vamos fechar? 😋`,
+[{ label: '✅ Quero o Combo!', act: 'combo' },
+ { label: '🔄 Ver outras opções', act: 'menu' }]);
+}
+
+async function confirmCombo() {
+    await typing(1300);
+    addBot(
+`Excelente escolha! 👏
+
+✅ Pedido adicionado:<div class="sum">
+<div class="row"><span>🍗 Bife à Parmegiana</span><span>R$ 29,90</span></div>
+<div class="row"><span>🍚 Arroz + 🍟 Batata Frita</span><span>incluso</span></div>
+<div class="row"><span>🥤 Refrigerante Lata</span><span>incluso</span></div>
+<div class="row total"><span>Total</span><span>R$ 29,90</span></div>
+</div>
+
+E como você prefere pagar? 💳`,
+[{ label: '💳 Cartão', act: 'payCard' },
+ { label: '📱 Pix', act: 'payPix' },
+ { label: '💵 Dinheiro', act: 'payCash' }]);
+}
+
+async function pay(method) {
+    await typing(1400);
+    const extra = method.includes('Pix')
+        ? '\n📱 Chave Pix enviada aqui mesmo após a confirmação!'
+        : method.includes('Cartão')
+        ? '\n💳 Maquininha no balcão ou link de pagamento no chat!'
+        : '\n💵 Pagamento na retirada — informe o troco com antecedência.';
+
+    addBot(
+`🎉 *Pedido confirmado com sucesso!*
+
+📝 *Resumo:*<div class="sum">
+<div class="row"><span>🍗 Bife à Parmegiana</span></div>
+<div class="row"><span>🍚 Arroz + 🍟 Batata Frita</span></div>
+<div class="row"><span>🥤 Refrigerante Lata</span></div>
+<div class="row total"><span>Total</span><span>R$ 29,90</span></div>
+<div class="row"><span>Pagamento</span><span>${method.split(' ')[0]}</span></div>
+</div>
+⏰ Pronto em *~25 minutos*!${extra}
+
+Obrigado pela preferência! 🍽️✨`);
+
+    await typing(2400);
+    addBot(
+`<span class="owner-tag">🤖 Mensagem para o dono do negócio</span>
+
+👆 Viu só? O robô tirou esse pedido completo em *menos de 30 segundos*.
+
+✅ Atendimento 24h, até de madrugada
+✅ Vários clientes ao mesmo tempo
+✅ Zero erro de anotação
+✅ Cardápio e pagamento no mesmo chat
+
+🚀 *Seu restaurante pode vender assim todos os dias.*
+Quer saber como? Fale com um especialista: 👇`,
+[{ label: '💬 Falar com Especialista', act: 'expert' },
+ { label: '🔄 Refazer a Demo', act: 'restart' }]);
+}
+
+async function contactExpert() {
+    await typing(1200);
+    addBot(
+`🎉 Que ótimo!
+
+Nossa equipe vai preparar uma demonstração *personalizada* para o seu restaurante, com seu cardápio real e sua identidade. 🍽️
+
+📲 Em um projeto real, este botão te levaria direto para o WhatsApp do especialista.
+
+Obrigado por testar nossa demo! 🙏✨`);
+}
+
+window.onload = () => setTimeout(startDemo, 600);
+</script>
+</body>
+</html>
